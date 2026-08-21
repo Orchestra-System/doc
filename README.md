@@ -9,8 +9,8 @@
 فرآیند توسعه، تست، استقرار و مدیریت نسخه نرم‌افزارها به یکی از چالش‌های اصلی
 سازمان تبدیل شده است.
 
-در وضعیت موجود، حدود ۲۰۰ نرم‌افزار MicroService به‌صورت مستقل توسعه داده
-می‌شوند و چرخه انتشار هر یک از آن‌ها نیازمند عبور از چندین مرحله شامل:
+در وضعیت موجود، نرم‌افزار MicroService به‌صورت مستقل توسعه داده می‌شوند و چرخه
+انتشار هر یک از آن‌ها نیازمند عبور از مراحل زیر می باشد:
 
 * توسعه
 * Commit
@@ -18,18 +18,17 @@
 * Build
 * ایجاد Docker Image
 * انتقال Image
+* انتشار در Nexus محیط تست
 * استقرار در محیط تست
 * انجام تست
 * ایجاد Merge Request برای نسخه عملیاتی
 * Build مجدد
-* انتشار در Nexus
-* ایجاد درخواست عملیاتی‌سازی
+* انتشار در Nexus محیط عملیات
+* ایجاد درخواست عملیاتی‌ سازی
 * استقرار توسط تیم عملیات و NOC
 
-است.
-
 این فرآیند در حالت عادی نیز دارای پیچیدگی قابل توجهی است؛ اما با جداسازی
-شبکه‌های محیط توسعه، تست و عملیات و همچنین محدودیت دسترسی مستقیم به محیط‌ها،
+شبکه‌های محیط توسعه، تست و عملیات و همچنین محدودیت دسترسی مستقیم به محیط‌هاموجود،
 پیچیدگی و هزینه عملیاتی آن به شکل محسوسی افزایش یافته است.
 
 از طرف دیگر، تکرار این فرآیند برای تعداد زیادی MicroService باعث افزایش وابستگی
@@ -72,6 +71,9 @@ Jenkins Build
 Docker Image
     │
     ▼
+Nexus (Test Environment)
+    │
+    ▼
 Test Environment
     │
     ▼
@@ -87,7 +89,7 @@ Jenkins Build مجدد
 Docker Image
     │
     ▼
-Nexus
+Nexus (Production Environment)
     │
     ▼
 Operation / NOC
@@ -121,8 +123,8 @@ Production
 با جداسازی شبکه محیط‌های Development، Test و Production، انتقال Artifact،
 Configuration و دسترسی به سرویس‌ها پیچیده‌تر شده است.
 
-در چنین شرایطی حتی انجام تست‌های ساده نیز ممکن است نیازمند ورود به VDI و
-استفاده از ابزارهای واسط باشد.
+در چنین شرایطی حتی انجام تست‌های ساده نیز ممکن است نیازمند ورود به VDI وPAM , RDO , ...
+استفاده از ابزارهای واسط همچون Web Browser همچون Firefox , Chrome به منظور دسترسی به محیط دسکتاپ سیستم عامل هدف می باشد.
 
 - - -
 ## 3.4 مدیریت Configuration
@@ -136,7 +138,7 @@ Configuration باشد.
 - - -
 ## 3.5 افزایش هزینه عملیاتی
 
-با وجود حدود ۲۰۰ MicroService، تعداد Pipelineها، Docker Imageها،
+با وجود تعداد زیاد MicroService، تعداد Pipelineها، Docker Imageها،
 Configurationها، Deploymentها و درخواست‌های عملیاتی بسیار زیاد می‌شود.
 
 در نتیجه:
@@ -467,7 +469,7 @@ Orchestra به‌عنوان یک Runtime Platform امکان اتصال Moduleه
 - - -
 # 13\. مزیت معماری Framework-Based
 
-در مدل جدید، Orchestra و MicroFox بخش قابل توجهی از زیرساخت Runtime را در
+در مدل جدید، Orchestra APIبخش قابل توجهی از زیرساخت Runtime را در
 اختیار Developer قرار می‌دهند.
 
 بنابراین Developer به جای تمرکز بر:
@@ -598,7 +600,7 @@ Developer همچنان می‌تواند از:
 
 * Java Libraries
 * JVM APIs
-* MicroFox APIs
+* Orchestra APIs
 * Java Classes
 * Enterprise Libraries
 
@@ -830,7 +832,7 @@ Downgrade
 |Distributed Lock     |وابسته به Application            |زیرساخت مشترک      |
 |Environment          |وابسته به Deployment             |Orchestra          |
 |Kubernetes           |Deployment محور                  |Runtime Platform   |
-|Dependency Management|پروژه به پروژه                   |Orchestra/MicroFox |
+|Dependency Management|پروژه به پروژه                   |Orchestra API      |
 |توسعه سریع           |متوسط                            |بالا               |
 |Boilerplate          |زیاد                             |کم                 |
 
@@ -898,7 +900,7 @@ Configuration
 
 در نتیجه Architecture به سمت:
 
-> **Platform as a Runtime**
+> **Platform as a Runtime (PaaR)**
 
 حرکت می‌کند.
 
@@ -952,46 +954,12 @@ Orchestra
     │
     ├── Start Module
     │
-    └── Run on Kubernetes
-    │
-    ▼
-Test
-    │
-    ▼
-Pilot
     │
     ▼
 Production
 ```
 در این مدل، **Tag تبدیل به واحد اصلی Release** می‌شود.
 
-- - -
-# 31\. Pilot Environment
-
-پیشنهاد می‌شود Orchestra یک Environment به نام Pilot داشته باشد.
-
-در این Environment، Version جدید یک سرویس می‌تواند قبل از انتشار عمومی اجرا شود.
-
-برای مثال:
-
-```text
-Production
- ├── Service A v2.1.0
- ├── Service B v3.0.0
- └── Service C v1.8.0
-
-Pilot
- ├── Service A v2.2.0
- └── Service B v3.1.0
-```
-پس از تأیید Pilot:
-
-```text
-Pilot Version
-      ↓
-Production Version
-```
-تغییر خواهد کرد.
 
 - - -
 # 32\. Rollback سریع
@@ -1123,7 +1091,7 @@ Orchestra اندازه‌گیری شوند:
 - - -
 # 36\. استراتژی مهاجرت
 
-پیشنهاد نمی‌شود تمام ۲۰۰ MicroService به‌صورت همزمان به Orchestra منتقل شوند.
+پیشنهاد نمی‌شود تمام MicroService ها به‌صورت همزمان به Orchestra منتقل شوند.
 
 مهاجرت بهتر است به صورت مرحله‌ای انجام شود.
 
@@ -1165,7 +1133,7 @@ Orchestra اندازه‌گیری شوند:
 
 تمام پروژه‌های جدید صرفاً به شکل:
 
-**Groovy + MicroFox + Orchestra Module**
+**Groovy + Orchestra Module**
 
 توسعه داده شوند.
 
@@ -1192,7 +1160,7 @@ Existing Java MicroServices
 و سپس پروژه‌های قدیمی به‌تدریج Migration شوند.
 
 - - -
-# 38\. مدل توسعه آینده
+<!-- # 38\. مدل توسعه آینده -->
 
 استاندارد پیشنهادی برای پروژه‌های جدید:
 
@@ -1203,7 +1171,7 @@ Developer
 Groovy
     │
     ▼
-MicroFox
+Orchestra API
     │
     ▼
 Orchestra Module
@@ -1268,7 +1236,7 @@ Configuration و Deployment به صورت استاندارد مدیریت می�
 
 ### افزایش سرعت توسعه
 
-Groovy و MicroFox بخش زیادی از Boilerplate را حذف می‌کنند.
+Groovy و Orchestra API بخش زیادی از Boilerplate را حذف می‌کنند.
 
 - - -
 # 40\. مزیت استراتژیک
@@ -1354,7 +1322,7 @@ Orchestra با ارائه یک Runtime و Orchestration Platform مرکزی، م
 > 
 > **Groovy تبدیل به زبان اصلی توسعه Moduleهای جدید می‌شود.**
 > 
-> **MicroFox زیرساخت توسعه Application را فراهم می‌کند.**
+> **]Orchestra API[ زیرساخت توسعه Application را فراهم می‌کند.**
 > 
 > **Orchestra مسئول Runtime، Configuration، Environment، DataSource، Scheduler،
 > Lifecycle و Orchestration می‌شود.**
