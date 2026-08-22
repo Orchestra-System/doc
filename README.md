@@ -589,8 +589,7 @@ Orchestra
 یکی از تغییرات اصلی این معماری، انتقال توسعه Moduleها از Java Applicationهای
 مستقل به Groovy Module است.
 
-Groovy به دلیل سازگاری بسیار بالا با JVM و Java، امکان استفاده از اکوسیستم
-موجود Java را فراهم می‌کند.
+زبان برنامه نویسی Groovy به دلیل سازگاری بسیار بالا با JVM و Java، امکان استفاده از اکوسیستم موجود Java را فراهم می‌کند.
 
 Developer همچنان می‌تواند از:
 
@@ -615,8 +614,7 @@ Developer همچنان می‌تواند از:
 - - -
 ### 19.2 توسعه سریع‌تر
 
-Groovy برای نوشتن Script و Business Logic بسیار مناسب است.
-
+کدهای Groovy برای نوشتن Script و Business Logic بسیار مناسب است.
 در نتیجه Developer می‌تواند سریع‌تر:
 
 ```text
@@ -633,8 +631,7 @@ Deploy
 - - -
 ### 19.3 JVM Compatibility
 
-Groovy روی JVM اجرا می‌شود و با Java Integration بسیار خوبی دارد.
-
+زبان Groovy روی JVM اجرا می‌شود و با Java Integration بسیار خوبی دارد.
 در نتیجه انتقال تدریجی از Java به Groovy امکان‌پذیر است و الزام به بازنویسی
 کامل اکوسیستم Java وجود ندارد.
 
