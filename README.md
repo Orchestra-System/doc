@@ -1376,7 +1376,6 @@ Production را برای صدها MicroService استاندارد و ساده ک
                     Enterprise
                     Services
 ```
-**Orchestra در این مدل، نقطه اتصال Development، Runtime، Environment و
-Infrastructure خواهد بود و می‌تواند به هسته اصلی Internal Developer Platform
-سازمان تبدیل شود.**
+
+**پروژه Orchestra در این مدل، نقطه اتصال Development، Runtime، Environment و Infrastructure خواهد بود و می‌تواند به هسته اصلی Internal Developer Platform سازمان تبدیل شود.**
 
